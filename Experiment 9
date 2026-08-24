@@ -1,0 +1,30 @@
+def first_fit_decreasing(weights, capacity):
+    # Sort items in decreasing order
+    weights.sort(reverse=True)
+    
+    bins = []  # list of bins, each bin is a list of items
+    
+    for item in weights:
+        placed = False
+        # Try to place item in an existing bin
+        for b in bins:
+            if sum(b) + item <= capacity:
+                b.append(item)
+                placed = True
+                break
+        # If not placed, create a new bin
+        if not placed:
+            bins.append([item])
+    
+    return bins
+
+
+# Example usage
+weights = [4, 8, 1, 4, 2, 1]   # items to pack
+capacity = 10                  # bin capacity
+
+bins = first_fit_decreasing(weights, capacity)
+
+print("Number of bins used:", len(bins))
+for i, b in enumerate(bins):
+    print(f"Bin {i+1}: {b}")
