@@ -1,0 +1,52 @@
+import math
+
+# Travelling Salesman Problem using Branch and Bound
+class TSP:
+    def __init__(self, graph):
+        self.graph = graph
+        self.n = len(graph)
+        self.best_cost = math.inf
+        self.best_path = []
+
+    def bound(self, path, cost):
+        # Simple bound: current cost + minimum edge for each remaining city
+        remaining = set(range(self.n)) - set(path)
+        min_edges = 0
+        for city in remaining:
+            min_edges += min(self.graph[city][j] for j in range(self.n) if j != city)
+        return cost + min_edges
+
+    def branch_and_bound(self, path, cost):
+        if len(path) == self.n:
+            # Complete tour: return to start
+            cost += self.graph[path[-1]][path[0]]
+            if cost < self.best_cost:
+                self.best_cost = cost
+                self.best_path = path[:]
+            return
+
+        for city in range(self.n):
+            if city not in path:
+                new_cost = cost + self.graph[path[-1]][city]
+                if new_cost < self.best_cost:
+                    bound_val = self.bound(path + [city], new_cost)
+                    if bound_val < self.best_cost:
+                        self.branch_and_bound(path + [city], new_cost)
+
+    def solve(self):
+        self.branch_and_bound([0], 0)
+        return self.best_cost, self.best_path
+
+
+# Example usage
+graph = [
+    [math.inf, 10, 15, 20],
+    [10, math.inf, 35, 25],
+    [15, 35, math.inf, 30],
+    [20, 25, 30, math.inf]
+]
+
+tsp = TSP(graph)
+cost, path = tsp.solve()
+print("Optimal Cost:", cost)
+print("Optimal
